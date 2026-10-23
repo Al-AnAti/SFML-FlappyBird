@@ -7,18 +7,16 @@
 
 Game::Game() 
 {
-	window.create(sf::VideoMode(WIDTH, HEIGHT), "FlappyBird");
+	window.create(sf::VideoMode(static_cast<unsigned>(WIDTH), static_cast<unsigned>(HEIGHT)), "FlappyBird");
 	window.setFramerateLimit(60);
 
-	init();
-}
+	if (!font.loadFromFile("assets/fonts/arial.ttf"))
+	{
+		std::cerr << "Failed to load font!" << std::endl;
+		exit(1);
+	}
 
-Game::~Game()
-{
-	for (auto& d : drawables)
-		delete d;
-	delete bird.texture;
-	delete score;
+	init();
 }
 
 void Game::init()
@@ -27,21 +25,12 @@ void Game::init()
 	drawables.clear();
 	pipes.clear();
 
-	if (!font.loadFromFile("fonts\\arial.ttf"))
-	{
-		std::cerr << "Failed to load font!" << std::endl;
-		exit(1);
-	}
-
 	Pipe::generate(pipes, drawables);
 
-	delete bird.texture;
-	bird = Bird();
+	bird.reset();
 	drawables.push_back(&bird.body);
-	
-	if (score != nullptr)
-		delete score;
-	score = new Score(drawables, font);
+
+	score = std::make_unique<Score>(drawables, font);
 }
 
 void Game::Run()
@@ -105,7 +94,6 @@ void Game::input(sf::Event event)
 		case sf::Keyboard::Escape:
 		{
 			window.close();
-			exit(1);
 		} break;
 		default:
 			break;
@@ -147,11 +135,10 @@ void Game::gameOver()
 	if (score->newRecord)
 		score->writeHScore();
 
-	sf::Text* text = new sf::Text();
-	text->setString("Game Over!");
-	text->setFont(font);
-	text->setCharacterSize(40);
-	text->setOrigin({ text->getGlobalBounds().width / 2, text->getGlobalBounds().height / 2 });
-	text->setPosition({ Game::WIDTH / 2, Game::HEIGHT / 2 });
-	drawables.push_back(text);
+	gameOverText.setString("Game Over!");
+	gameOverText.setFont(font);
+	gameOverText.setCharacterSize(40);
+	gameOverText.setOrigin({ gameOverText.getLocalBounds().width / 2, gameOverText.getLocalBounds().height / 2 });
+	gameOverText.setPosition({ Game::WIDTH / 2, Game::HEIGHT / 2 });
+	drawables.push_back(&gameOverText);
 }

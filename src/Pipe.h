@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+#include <vector>
 #include "SFML/Graphics.hpp"
 
 class Pipe
@@ -26,10 +28,9 @@ private:
 	inline static const float spacing	  = 400.f;
 
 public:
-	Pipe(sf::Vector2f& pos);
-	static void generate(std::vector<Pipe*>& pipes, std::vector<sf::Drawable*>& drawables);
+	Pipe(const sf::Vector2f& pos);
+	static void generate(std::vector<std::unique_ptr<Pipe>>& pipes, std::vector<sf::Drawable*>& drawables);
 	void move();
-	void drawPipes(sf::RenderWindow& window);
 	void resetPosition();
 	float getX() const;
 	

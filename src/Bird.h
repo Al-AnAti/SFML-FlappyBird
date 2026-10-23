@@ -4,12 +4,11 @@
 
 class Bird
 {
-public: 
-	//sf::CircleShape body;
-	sf::Texture* texture;
+public:
 	sf::Sprite body;
 
 private:
+	sf::Texture texture;
 	float speed;
 
 	inline static const float weight = 0.5f;
@@ -18,6 +17,11 @@ private:
 
 public:
 	Bird();
+	// body keeps a pointer to texture, so a copy would point at the wrong texture
+	Bird(const Bird&) = delete;
+	Bird& operator=(const Bird&) = delete;
+
+	void reset();
 	void jump();
 	void Move();
 };

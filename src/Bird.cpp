@@ -1,16 +1,20 @@
-#include <iostream>
 #include "Bird.h"
 
 Bird::Bird()
 {
-	speed = maxFallingSpeed;
+	texture.loadFromFile("assets/textures/BlueBird.png");
 
-	texture = new sf::Texture();
-	texture->loadFromFile("BlueBird.png");
-
-	body.setTexture(*texture);
-	body.setPosition({ 640.f, 200.f });
+	body.setTexture(texture);
 	body.setScale({ -2.25f, 2.25f });
+
+	reset();
+}
+
+void Bird::reset()
+{
+	speed = maxFallingSpeed;
+	body.setPosition({ 640.f, 200.f });
+	body.setRotation(0.f);
 }
 
 void Bird::jump()

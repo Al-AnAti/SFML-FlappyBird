@@ -2,7 +2,7 @@
 
 #include "Pipe.h"
 
-Pipe::Pipe(sf::Vector2f& pos)
+Pipe::Pipe(const sf::Vector2f& pos)
 {
 	speed = 5.f;
 	passed = false;
@@ -30,13 +30,12 @@ Pipe::Pipe(sf::Vector2f& pos)
 	mid.setSize({ 10, halfGap * 2 });
 }
 
-void Pipe::generate(std::vector<Pipe*>& pipes, std::vector<sf::Drawable*>& drawables)
+void Pipe::generate(std::vector<std::unique_ptr<Pipe>>& pipes, std::vector<sf::Drawable*>& drawables)
 {
 	for (int i = 0; i < numberOfPipes; i++)
 	{
 		sf::Vector2f vec2{ spawnXPoint + i * spacing, randomHeight()};
-		Pipe* p = new Pipe( vec2 );
-		pipes.push_back(p);
+		auto& p = pipes.emplace_back(std::make_unique<Pipe>(vec2));
 		drawables.push_back(&p->top);
 		drawables.push_back(&p->bot);
 	}
@@ -59,11 +58,11 @@ float Pipe::randomHeight()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dist(minHeight, maxHeight);
+	std::uniform_int_distribution<> dist(static_cast<int>(minHeight), static_cast<int>(maxHeight));
 
 	int randomNumber = dist(gen);
 
-	return randomNumber;
+	return static_cast<float>(randomNumber);
 }
 
 void Pipe::resetPosition()

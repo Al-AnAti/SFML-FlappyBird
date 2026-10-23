@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include "SFML/Graphics.hpp"
 #include "Pipe.h"
 #include "Bird.h"
@@ -18,15 +21,17 @@ private:
 	sf::Event event;
 	sf::Font font;
 
+	// Everything drawn each frame. Doesn't own anything: the objects
+	// belong to pipes, bird, score and gameOverText below.
 	std::vector<sf::Drawable*> drawables;
 
-	std::vector<Pipe*> pipes;
+	std::vector<std::unique_ptr<Pipe>> pipes;
 	Bird bird;
-	Score* score;
+	std::unique_ptr<Score> score;
+	sf::Text gameOverText;
 
 public:
 	Game();
-	~Game();
 	void Run();
 
 private:
